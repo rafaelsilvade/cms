@@ -5,17 +5,20 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
+require_once 'Math/BigInteger.php';
+
 abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
 {
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
+
         self::reRequireFile('Math/BigInteger.php');
     }
 
     public function getInstance($x = 0, $base = 10)
     {
-        return new \phpseclib\Math\BigInteger($x, $base);
+        return new Math_BigInteger($x, $base);
     }
 
     public function testConstructorBase2()
@@ -297,7 +300,7 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
     public function testDiffieHellmanKeyAgreement()
     {
         if (getenv('TRAVIS') && PHP_VERSION === '5.3.3'
-            && MATH_BIGINTEGER_MODE === \phpseclib\Math\BigInteger::MODE_INTERNAL
+            && MATH_BIGINTEGER_MODE === MATH_BIGINTEGER_MODE_INTERNAL
         ) {
             $this->markTestIncomplete(
                 'This test hangs on PHP 5.3.3 using internal mode.'

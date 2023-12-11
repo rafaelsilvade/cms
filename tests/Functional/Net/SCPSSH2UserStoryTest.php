@@ -6,9 +6,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Net\SCP;
-use phpseclib\Net\SSH2;
-
 class Functional_Net_SCPSSH2UserStoryTest extends PhpseclibFunctionalTestCase
 {
     static protected $remoteFile;
@@ -25,7 +22,7 @@ class Functional_Net_SCPSSH2UserStoryTest extends PhpseclibFunctionalTestCase
 
     public function testConstructSSH2()
     {
-        $ssh = new SSH2($this->getEnv('SSH_HOSTNAME'));
+        $ssh = new Net_SSH2($this->getEnv('SSH_HOSTNAME'));
         $this->assertTrue(
             $ssh->login(
                 $this->getEnv('SSH_USERNAME'),
@@ -35,24 +32,18 @@ class Functional_Net_SCPSSH2UserStoryTest extends PhpseclibFunctionalTestCase
         return $ssh;
     }
 
-    /**
-     * @depends testConstructSSH2
-     * @param \phpseclib\Net\SSH2 $ssh
-     */
+    /** @depends testConstructSSH2 */
     public function testConstructor($ssh)
     {
-        $scp = new SCP($ssh);
+        $scp = new Net_SCP($ssh);
         $this->assertTrue(
             is_object($scp),
-            'Could not construct \phpseclib\Net\SCP object.'
+            'Could not construct Net_SCP object.'
         );
         return $scp;
     }
 
-    /**
-     * @depends testConstructor
-     * @param \phpseclib\Net\SCP $scp
-     */
+    /** @depends testConstructor */
     public function testPutGetString($scp)
     {
         $this->assertTrue(
@@ -74,10 +65,7 @@ class Functional_Net_SCPSSH2UserStoryTest extends PhpseclibFunctionalTestCase
         return $scp;
     }
 
-    /**
-     * @depends testPutGetString
-     * @param \phpseclib\Net\SCP $scp
-     */
+    /** @depends testPutGetString */
     public function testGetFile($scp)
     {
         $localFilename = $this->createTempFile();

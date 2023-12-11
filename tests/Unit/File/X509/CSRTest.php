@@ -5,7 +5,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\File\X509;
+require_once 'File/X509.php';
 
 class Unit_File_X509_CSRTest extends PhpseclibTestCase
 {
@@ -22,7 +22,7 @@ npzHkI1Trraveu0gtRjT/EzHoqjCBI0ekCZ9+fhrex8Sm6Nsq9IgHYyrqnE+PQko
 v5RwaQHmQEzHofTzF7I+
 -----END CERTIFICATE REQUEST-----';
 
-        $x509 = new X509();
+        $x509 = new File_X509();
 
         $spkac = $x509->loadCSR($test);
 
@@ -62,7 +62,7 @@ secxBTTCNgI48YezK3GDkn65cmlnkt6F6Mf0MwoDaXTuB88Jycbwb5ihKnHEJIsO
 draiRBZruwMPwPIP
 -----END NEW CERTIFICATE REQUEST-----';
 
-        $x509 = new X509();
+        $x509 = new File_X509();
 
         $csr = $x509->loadCSR($test);
 

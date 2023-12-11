@@ -5,15 +5,14 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\Base;
-use phpseclib\Crypt\RC2;
+require_once 'Crypt/RC2.php';
 
 class Unit_Crypt_RC2Test extends PhpseclibTestCase
 {
     var $engines = array(
-        Base::ENGINE_INTERNAL => 'internal',
-        Base::ENGINE_MCRYPT => 'mcrypt',
-        Base::ENGINE_OPENSSL => 'OpenSSL',
+        CRYPT_ENGINE_INTERNAL => 'internal',
+        CRYPT_ENGINE_MCRYPT => 'mcrypt',
+        CRYPT_ENGINE_OPENSSL => 'OpenSSL',
     );
 
     public function engineVectors()
@@ -45,7 +44,7 @@ class Unit_Crypt_RC2Test extends PhpseclibTestCase
     // this test is just confirming RC2's key expansion
     public function testEncryptPadding()
     {
-        $rc2 = new RC2(Base::MODE_ECB);
+        $rc2 = new Crypt_RC2(CRYPT_MODE_ECB);
 
         // unlike Crypt_AES / Crypt_Rijndael, when you tell Crypt_RC2 that the key length is 128-bits the key isn't null padded to that length.
         // instead, RC2 key expansion is used to extend it out to that length. this isn't done for AES / Rijndael since that doesn't define any
@@ -82,24 +81,24 @@ class Unit_Crypt_RC2Test extends PhpseclibTestCase
 
         $rc2->setKey(str_repeat('d', 16), 128);
 
-        $rc2->setPreferredEngine(Base::ENGINE_INTERNAL);
+        $rc2->setPreferredEngine(CRYPT_ENGINE_INTERNAL);
         $internal = $rc2->encrypt('d');
 
         $result = pack('H*', 'e3b36057f4821346');
         $this->assertEquals($result, $internal, 'Failed asserting that the internal engine produced the correct result');
 
-        $rc2->setPreferredEngine(Base::ENGINE_MCRYPT);
-        if ($rc2->getEngine() == Base::ENGINE_MCRYPT) {
+        $rc2->setPreferredEngine(CRYPT_ENGINE_MCRYPT);
+        if ($rc2->getEngine() == CRYPT_ENGINE_MCRYPT) {
             $mcrypt = $rc2->encrypt('d');
             $this->assertEquals($result, $mcrypt, 'Failed asserting that the mcrypt engine produced the correct result');
         } else {
             self::markTestSkipped('Unable to initialize mcrypt engine');
         }
 
-        $rc2->setPreferredEngine(Base::ENGINE_OPENSSL);
-        if ($rc2->getEngine() == Base::ENGINE_OPENSSL) {
+        $rc2->setPreferredEngine(CRYPT_ENGINE_OPENSSL);
+        if ($rc2->getEngine() == CRYPT_ENGINE_OPENSSL) {
             $openssl = $rc2->encrypt('d');
-            $this->assertEquals($result, $openssl,  'Failed asserting that the OpenSSL engine produced the correct result');
+            $this->assertEquals($result, $openssl, 'Failed asserting that the OpenSSL engine produced the correct result');
         } else {
             self::markTestSkipped('Unable to initialize OpenSSL engine');
         }
@@ -110,7 +109,7 @@ class Unit_Crypt_RC2Test extends PhpseclibTestCase
      */
     public function testVectors($engine, $engineName, $key, $keyLen, $plaintext, $ciphertext)
     {
-        $rc2 = new RC2();
+        $rc2 = new Crypt_RC2();
         $rc2->disablePadding();
         $rc2->setKeyLength($keyLen);
         $rc2->setKey(pack('H*', $key)); // could also do $rc2->setKey(pack('H*', $key), $keyLen)

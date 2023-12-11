@@ -5,17 +5,16 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\Base;
-use phpseclib\Crypt\Blowfish;
+require_once 'Crypt/Blowfish.php';
 
 class Unit_Crypt_BlowfishTest extends PhpseclibTestCase
 {
     public function engineVectors()
     {
         $engines = array(
-            Base::ENGINE_INTERNAL => 'internal',
-            Base::ENGINE_MCRYPT => 'mcrypt',
-            Base::ENGINE_OPENSSL => 'OpenSSL',
+            CRYPT_ENGINE_INTERNAL => 'internal',
+            CRYPT_ENGINE_MCRYPT => 'mcrypt',
+            CRYPT_ENGINE_OPENSSL => 'OpenSSL',
         );
 
         // tests from https://www.schneier.com/code/vectors.txt
@@ -73,7 +72,7 @@ class Unit_Crypt_BlowfishTest extends PhpseclibTestCase
      */
     public function testVectors($engine, $engineName, $key, $plaintext, $expected)
     {
-        $bf = new Blowfish();
+        $bf = new Crypt_Blowfish();
         $bf->setKey($key);
         if (!$bf->isValidEngine($engine)) {
             self::markTestSkipped('Unable to initialize ' . $engineName . ' engine');

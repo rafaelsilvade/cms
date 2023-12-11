@@ -5,14 +5,18 @@
 
  <!-- We are using the PSR2 standard as a base -->
  <rule ref="PSR2">
-  <!-- Exceptions due to legacy code with PHP4 compatibility -->
+  <!-- Exceptions for PHP4 compatibility -->
+  <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
   <exclude name="PSR2.Classes.PropertyDeclaration.ScopeMissing" />
   <exclude name="PSR2.Classes.PropertyDeclaration.VarUsed" />
   <exclude name="Squiz.Scope.MethodScope.Missing" />
 
   <!-- Exceptions for backward compatibility -->
+  <exclude name="PSR1.Classes.ClassDeclaration.MultipleClasses" />
+  <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
   <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps" />
   <exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
+  <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps" />
 
   <!-- Exceptions for whitespacing -->
   <exclude name="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma" />

@@ -6,8 +6,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\Base;
-use phpseclib\Net\SFTP;
+require_once 'Crypt/Base.php';
 
 class Functional_Net_SFTPLargeFileTest extends Functional_Net_SFTPTestCase
 {
@@ -30,7 +29,7 @@ class Functional_Net_SFTPLargeFileTest extends Functional_Net_SFTPTestCase
         $filename = 'file-large-from-local.txt';
 
         $this->assertTrue(
-            $this->sftp->put($filename, $tmp_filename, SFTP::SOURCE_LOCAL_FILE),
+            $this->sftp->put($filename, $tmp_filename, NET_SFTP_LOCAL_FILE),
             'Failed asserting that local file could be successfully put().'
         );
 

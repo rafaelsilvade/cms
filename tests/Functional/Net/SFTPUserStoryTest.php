@@ -6,8 +6,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Net\SFTP;
-
 class Functional_Net_SFTPUserStoryTest extends PhpseclibFunctionalTestCase
 {
     static protected $scratchDir;
@@ -27,7 +25,7 @@ class Functional_Net_SFTPUserStoryTest extends PhpseclibFunctionalTestCase
 
     public function testConstructor()
     {
-        $sftp = new SFTP($this->getEnv('SSH_HOSTNAME'));
+        $sftp = new Net_SFTP($this->getEnv('SSH_HOSTNAME'));
 
         $this->assertTrue(
             is_object($sftp),
@@ -135,13 +133,24 @@ class Functional_Net_SFTPUserStoryTest extends PhpseclibFunctionalTestCase
         return $sftp;
     }
 
+    static function callback($length)
+    {
+        $r = substr(self::$buffer, 0, $length);
+        self::$buffer = substr(self::$buffer, $length);
+        if (strlen($r)) {
+            return $r;
+        }
+        return null;
+    }
+
     /**
      * @depends testStatOnDir
      */
-    public function testPutSizeGetFile($sftp)
+    public function testPutSizeGetFileCallback($sftp)
     {
+        self::$buffer =  self::$exampleData;
         $this->assertTrue(
-            $sftp->put('file1.txt', self::$exampleData),
+            $sftp->put('file1.txt', array(__CLASS__, 'callback'), NET_SFTP_CALLBACK),
             'Failed asserting that example data could be successfully put().'
         );
 
@@ -160,24 +169,13 @@ class Functional_Net_SFTPUserStoryTest extends PhpseclibFunctionalTestCase
         return $sftp;
     }
 
-    static function callback($length)
-    {
-        $r = substr(self::$buffer, 0, $length);
-        self::$buffer = substr(self::$buffer, $length);
-        if (strlen($r)) {
-            return $r;
-        }
-        return null;
-    }
-
     /**
      * @depends testStatOnDir
      */
-    public function testPutSizeGetFileCallback($sftp)
+    public function testPutSizeGetFile($sftp)
     {
-        self::$buffer = self::$exampleData;
         $this->assertTrue(
-            $sftp->put('file1.txt', array(__CLASS__, 'callback'), $sftp::SOURCE_CALLBACK),
+            $sftp->put('file1.txt', self::$exampleData),
             'Failed asserting that example data could be successfully put().'
         );
 
@@ -651,5 +649,28 @@ class Functional_Net_SFTPUserStoryTest extends PhpseclibFunctionalTestCase
         $this->assertSame($stat['type'], NET_SFTP_TYPE_SYMLINK);
 
         $sftp->enableStatCache();
+
+        return $sftp;
+    }
+
+    /**
+     * @depends testStatVsLstat
+     * @group github830
+     */
+    public function testUploadOffsets($sftp)
+    {
+        $sftp->put('offset.txt', 'res.txt', NET_SFTP_LOCAL_FILE, 0, 10);
+        $this->assertSame(
+            substr(self::$exampleData, 10),
+            $sftp->get('offset.txt'),
+            'Failed asserting that portions of a file could be uploaded.'
+        );
+
+        $sftp->put('offset.txt', 'res.txt', NET_SFTP_LOCAL_FILE, self::$exampleDataLength - 100);
+        $this->assertSame(
+            substr(self::$exampleData, 10, -90) . self::$exampleData,
+            $sftp->get('offset.txt'),
+            'Failed asserting that you could upload into the middle of a file.'
+        );
     }
 }

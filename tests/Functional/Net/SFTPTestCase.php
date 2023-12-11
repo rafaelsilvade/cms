@@ -6,8 +6,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Net\SFTP;
-
 /**
  * This class provides each test method with a new and empty $this->scratchDir.
  */
@@ -21,7 +19,7 @@ abstract class Functional_Net_SFTPTestCase extends PhpseclibFunctionalTestCase
         parent::setUp();
         $this->scratchDir = uniqid('phpseclib-sftp-scratch-');
 
-        $this->sftp = new SFTP($this->getEnv('SSH_HOSTNAME'));
+        $this->sftp = new Net_SFTP($this->getEnv('SSH_HOSTNAME'));
         $this->assertTrue($this->sftp->login(
             $this->getEnv('SSH_USERNAME'),
             $this->getEnv('SSH_PASSWORD')

@@ -5,9 +5,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\Hash;
-use phpseclib\Math\BigInteger;
-
 abstract class PhpseclibFunctionalTestCase extends PhpseclibTestCase
 {
     public static function setUpBeforeClass()
@@ -16,19 +13,19 @@ abstract class PhpseclibFunctionalTestCase extends PhpseclibTestCase
             if (extension_loaded('gmp')) {
                 self::ensureConstant(
                     'MATH_BIGINTEGER_MODE',
-                    BigInteger::MODE_GMP
+                    MATH_BIGINTEGER_MODE_GMP
                 );
             } elseif (extension_loaded('bcmath')) {
                 self::ensureConstant(
                     'MATH_BIGINTEGER_MODE',
-                    BigInteger::MODE_BCMATH
+                    MATH_BIGINTEGER_MODE_BCMATH
                 );
             } else {
                 self::markTestSkipped(
                     'Should have gmp or bcmath extension for functional test.'
                 );
             }
-            self::ensureConstant('CRYPT_HASH_MODE', Hash::MODE_HASH);
+            self::ensureConstant('CRYPT_HASH_MODE', CRYPT_HASH_MODE_HASH);
             self::reRequireFile('Math/BigInteger.php');
             self::reRequireFile('Crypt/Hash.php');
         }

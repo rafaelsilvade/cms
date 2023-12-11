@@ -5,10 +5,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\File\ASN1;
-use phpseclib\File\ASN1\Element;
-use phpseclib\File\X509;
-use phpseclib\Crypt\RSA;
+require_once 'File/X509.php';
 
 class Unit_File_X509_X509Test extends PhpseclibTestCase
 {
@@ -54,7 +51,7 @@ k6m17mi63YW/+iPCGOWZ2qXmY5HPEyyF2L4L4IDryFJ+8xLyw3pH9/yp5aHZDtp6
 833K6qyjgHJT+fUzSEYpiwF5rSBJIGClOCY=
 -----END CERTIFICATE-----';
 
-        $x509 = new X509();
+        $x509 = new File_X509();
 
         $cert = $x509->loadX509($test);
 
@@ -103,7 +100,7 @@ k6m17mi63YW/+iPCGOWZ2qXmY5HPEyyF2L4L4IDryFJ+8xLyw3pH9/yp5aHZDtp6
 833K6qyjgHJT+fUzSEYpiwF5rSBJIGClOCY=
 -----END CERTIFICATE-----';
 
-        $x509 = new X509();
+        $x509 = new File_X509();
 
         $cert = $x509->loadX509($test);
 
@@ -112,7 +109,7 @@ k6m17mi63YW/+iPCGOWZ2qXmY5HPEyyF2L4L4IDryFJ+8xLyw3pH9/yp5aHZDtp6
 
     public function testSaveUnsupportedExtension()
     {
-        $x509 = new X509();
+        $x509 = new File_X509();
         $cert = $x509->loadX509('-----BEGIN CERTIFICATE-----
 MIIDITCCAoqgAwIBAgIQT52W2WawmStUwpV8tBV9TTANBgkqhkiG9w0BAQUFADBM
 MQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkg
@@ -133,15 +130,15 @@ ulvKGQSy068Bsn5fFNum21K5mvMSf3yinDtvmX3qUA12IxL/92ZzKbeVCq3Yi7Le
 IOkKcGQRCMha8X2e7GmlpdWC1ycenlbN0nbVeSv3JUMcafC4+Q==
 -----END CERTIFICATE-----');
 
-        $asn1 = new ASN1();
+        $asn1 = new File_ASN1();
 
         $value = $this->_encodeOID('1.2.3.4');
-        $ext = chr(ASN1::TYPE_OBJECT_IDENTIFIER) . $asn1->_encodeLength(strlen($value)) . $value;
+        $ext = chr(FILE_ASN1_TYPE_OBJECT_IDENTIFIER) . $asn1->_encodeLength(strlen($value)) . $value;
         $value = 'zzzzzzzzz';
-        $ext.= chr(ASN1::TYPE_OCTET_STRING) . $asn1->_encodeLength(strlen($value)) . $value;
-        $ext = chr(ASN1::TYPE_SEQUENCE | 0x20) . $asn1->_encodeLength(strlen($ext)) . $ext;
+        $ext.= chr(FILE_ASN1_TYPE_OCTET_STRING) . $asn1->_encodeLength(strlen($value)) . $value;
+        $ext = chr(FILE_ASN1_TYPE_SEQUENCE | 0x20) . $asn1->_encodeLength(strlen($ext)) . $ext;
 
-        $cert['tbsCertificate']['extensions'][4] = new Element($ext);
+        $cert['tbsCertificate']['extensions'][4] = new File_ASN1_Element($ext);
 
         $result = $x509->loadX509($x509->saveX509($cert));
 
@@ -153,7 +150,7 @@ IOkKcGQRCMha8X2e7GmlpdWC1ycenlbN0nbVeSv3JUMcafC4+Q==
      */
     public function testSaveNullRSAParam()
     {
-        $privKey = new RSA();
+        $privKey = new Crypt_RSA();
         $privKey->loadKey('-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDMswfEpAgnUDWA74zZw5XcPsWh1ly1Vk99tsqwoFDkLF7jvXy1
 dDLHYfuquvfxCgcp8k/4fQhx4ubR8bbGgEq9B05YRnViK0R0iBB5Ui4IaxWYYhKE
@@ -170,19 +167,19 @@ aBtsWpliLSex/HHhtRW9AkBGcq67zKmEpJ9kXcYLEjJii3flFS+Ct/rNm+Hhm1l7
 4vca9v/F2hGVJuHIMJ8mguwYlNYzh2NqoIDJTtgOkBmt
 -----END RSA PRIVATE KEY-----');
 
-        $pubKey = new RSA();
+        $pubKey = new Crypt_RSA();
         $pubKey->loadKey($privKey->getPublicKey());
         $pubKey->setPublicKey();
 
-        $subject = new X509();
+        $subject = new File_X509();
         $subject->setDNProp('id-at-organizationName', 'phpseclib demo cert');
         $subject->setPublicKey($pubKey);
 
-        $issuer = new X509();
+        $issuer = new File_X509();
         $issuer->setPrivateKey($privKey);
         $issuer->setDN($subject->getDN());
 
-        $x509 = new X509();
+        $x509 = new File_X509();
 
         $result = $x509->sign($issuer, $subject);
         $cert = $x509->saveX509($result);
@@ -220,7 +217,7 @@ aBtsWpliLSex/HHhtRW9AkBGcq67zKmEpJ9kXcYLEjJii3flFS+Ct/rNm+Hhm1l7
 
     public function testGetOID()
     {
-        $x509 = new X509();
+        $x509 = new File_X509();
         $this->assertEquals($x509->getOID('2.16.840.1.101.3.4.2.1'), '2.16.840.1.101.3.4.2.1');
         $this->assertEquals($x509->getOID('id-sha256'), '2.16.840.1.101.3.4.2.1');
         $this->assertEquals($x509->getOID('zzz'), 'zzz');

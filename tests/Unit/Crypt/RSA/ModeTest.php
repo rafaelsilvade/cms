@@ -5,7 +5,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\RSA;
+require_once 'Crypt/RSA.php' ;
 
 class Unit_Crypt_RSA_ModeTest extends PhpseclibTestCase
 {
@@ -13,7 +13,7 @@ class Unit_Crypt_RSA_ModeTest extends PhpseclibTestCase
     {
         $plaintext = 'a';
 
-        $rsa = new RSA();
+        $rsa = new Crypt_RSA();
 
         $privatekey = '-----BEGIN RSA PRIVATE KEY-----
 MIICXAIBAAKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0FPqri0cb2JZfXJ/DgYSF6vUp
@@ -31,7 +31,7 @@ U9VQQSQzY1oZMVX8i1m5WUTLPz2yLJIBQVdXqhMCQBGoiuSoSjafUhV7i1cEGpb88h5NBYZzWXGZ
         $rsa->loadKey($privatekey);
         $rsa->loadKey($rsa->getPublicKey());
 
-        $rsa->setEncryptionMode(RSA::ENCRYPTION_NONE);
+        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_NONE);
         $expected = '105b92f59a87a8ad4da52c128b8c99491790ef5a54770119e0819060032fb9e772ed6772828329567f3d7e9472154c1530f8156ba7fd732f52ca1c06' .
             '5a3f5ed8a96c442e4662e0464c97f133aed31262170201993085a589565d67cc9e727e0d087e3b225c8965203b271e38a499c92fc0d6502297eca712' .
             '4d04bd467f6f1e7c';
@@ -49,7 +49,7 @@ U9VQQSQzY1oZMVX8i1m5WUTLPz2yLJIBQVdXqhMCQBGoiuSoSjafUhV7i1cEGpb88h5NBYZzWXGZ
      */
     public function testPSSSigs()
     {
-        $rsa = new RSA();
+        $rsa = new Crypt_RSA();
         $rsa->loadKey('-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqGKukO1De7zhZj6+H0qtjTkVx
 wTCpvKe4eCZ0FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFnc

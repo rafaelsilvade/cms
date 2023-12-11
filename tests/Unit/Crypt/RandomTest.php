@@ -5,8 +5,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\Random;
-
 class Unit_Crypt_RandomTest extends PhpseclibTestCase
 {
     public function stringLengthData()
@@ -23,7 +21,7 @@ class Unit_Crypt_RandomTest extends PhpseclibTestCase
     {
         $this->assertSame(
             $length,
-            strlen(Random::string($length)),
+            strlen(crypt_random_string($length)),
             'Failed asserting that a string of expected length was generated.'
         );
     }
@@ -36,7 +34,7 @@ class Unit_Crypt_RandomTest extends PhpseclibTestCase
     {
         $values = array();
         for ($i = 0; $i < 10000; ++$i) {
-            $rand = Random::string(16);
+            $rand = crypt_random_string(16);
             $this->assertSame(16, strlen($rand));
             $this->assertArrayNotHasKey(
                 $rand,

@@ -5,9 +5,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\AES;
-use phpseclib\Crypt\Base;
-use phpseclib\Crypt\Rijndael;
+require_once 'Crypt/AES.php';
 
 abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
 {
@@ -18,10 +16,10 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
         if ($aes->getEngine() != $this->engine) {
             $engine = 'internal';
             switch ($this->engine) {
-                case Base::ENGINE_OPENSSL:
+                case CRYPT_ENGINE_OPENSSL:
                     $engine = 'OpenSSL';
                     break;
-                case Base::ENGINE_MCRYPT:
+                case CRYPT_ENGINE_MCRYPT:
                     $engine = 'mcrypt';
             }
             self::markTestSkipped('Unable to initialize ' . $engine . ' engine');
@@ -36,9 +34,9 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
     public function continuousBufferCombos()
     {
         $modes = array(
-            Base::MODE_CTR,
-            Base::MODE_OFB,
-            Base::MODE_CFB,
+            'CRYPT_MODE_CTR',
+            'CRYPT_MODE_OFB',
+            'CRYPT_MODE_CFB',
         );
         $plaintexts = array(
             '',
@@ -76,7 +74,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
      */
     public function testEncryptDecryptWithContinuousBuffer($mode, $plaintext, $iv, $key)
     {
-        $aes = new AES($mode);
+        $aes = new Crypt_AES(constant($mode));
         $aes->setPreferredEngine($this->engine);
         $aes->enableContinuousBuffer();
         $aes->setIV($iv);
@@ -100,7 +98,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
         // this test case is from the following URL:
         // https://web.archive.org/web/20070209120224/http://fp.gladman.plus.com/cryptography_technology/rijndael/aesdvec.zip
 
-        $aes = new Rijndael();
+        $aes = new Crypt_Rijndael();
         $aes->setPreferredEngine($this->engine);
         $aes->disablePadding();
         $aes->setKey(pack('H*', '2b7e151628aed2a6abf7158809cf4f3c762e7160')); // 160-bit key. Valid in Rijndael.
@@ -116,7 +114,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
     {
         // same as the above - just with a different ciphertext
 
-        $aes = new AES();
+        $aes = new Crypt_AES();
         $aes->setPreferredEngine($this->engine);
         $aes->disablePadding();
         $aes->setKey(pack('H*', '2b7e151628aed2a6abf7158809cf4f3c762e7160')); // 160-bit key. AES should null pad to 192-bits
@@ -133,9 +131,9 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
     public function continuousBufferBatteryCombos()
     {
         $modes = array(
-            Base::MODE_CTR,
-            Base::MODE_OFB,
-            Base::MODE_CFB,
+            'CRYPT_MODE_CTR',
+            'CRYPT_MODE_OFB',
+            'CRYPT_MODE_CFB',
         );
 
         $combos = array(
@@ -176,7 +174,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
         $iv = str_repeat('x', 16);
         $key = str_repeat('a', 16);
 
-        $aes = new AES($mode);
+        $aes = new Crypt_AES(constant($mode));
         $aes->setPreferredEngine($this->engine);
         $aes->setKey($key);
         $aes->setIV($iv);
@@ -192,7 +190,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
 
         $c1 = $aes->$op($str);
 
-        $aes = new AES($mode);
+        $aes = new Crypt_AES(constant($mode));
         $aes->setPreferredEngine($this->engine);
         $aes->enableContinuousBuffer();
         $aes->setKey($key);
@@ -227,7 +225,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
         $iv = str_repeat('x', 16);
         $key = str_repeat('a', 16);
 
-        $aes = new AES($mode);
+        $aes = new Crypt_AES(constant($mode));
         $aes->setPreferredEngine($this->engine);
         $aes->setKey($key);
         $aes->setIV($iv);
@@ -243,7 +241,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
 
         $c1 = $aes->$op($str);
 
-        $aes = new AES($mode);
+        $aes = new Crypt_AES(constant($mode));
         $aes->setPreferredEngine($this->engine);
         $aes->setKey($key);
         $aes->setIV($iv);
@@ -264,7 +262,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
     // from http://csrc.nist.gov/groups/STM/cavp/documents/aes/AESAVS.pdf#page=16
     public function testGFSBox128()
     {
-        $aes = new AES();
+        $aes = new Crypt_AES();
 
         $aes->setKey(pack('H*', '00000000000000000000000000000000'));
         $aes->setIV(pack('H*', '00000000000000000000000000000000'));
@@ -291,7 +289,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
 
     public function testGFSBox192()
     {
-        $aes = new AES();
+        $aes = new Crypt_AES();
 
         $aes->setKey(pack('H*', '000000000000000000000000000000000000000000000000'));
         $aes->setIV(pack('H*', '00000000000000000000000000000000'));
@@ -316,7 +314,7 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
 
     public function testGFSBox256()
     {
-        $aes = new AES();
+        $aes = new Crypt_AES();
 
         $aes->setKey(pack('H*', '00000000000000000000000000000000' . '00000000000000000000000000000000'));
         $aes->setIV(pack('H*', '00000000000000000000000000000000'));
@@ -335,5 +333,40 @@ abstract class Unit_Crypt_AES_TestCase extends PhpseclibTestCase
         $this->assertSame($result, '38f2c7ae10612415d27ca190d27da8b4');
         $result = bin2hex($aes->encrypt(pack('H*', '91fbef2d15a97816060bee1feaa49afe')));
         $this->assertSame($result, '1bc704f1bce135ceb810341b216d7abe');
+    }
+
+    public function testGetKeyLengthDefault()
+    {
+        $aes = new Crypt_AES();
+        $this->assertSame($aes->getKeyLength(), 128);
+    }
+
+    public function testGetKeyLengthWith192BitKey()
+    {
+        $aes = new Crypt_AES();
+        $aes->setKey(str_repeat('a', 24));
+        $this->assertSame($aes->getKeyLength(), 192);
+    }
+
+    public function testSetKeyLengthWithLargerKey()
+    {
+        $aes = new Crypt_AES();
+        $aes->setKeyLength(128);
+        $aes->setKey(str_repeat('a', 24));
+        $this->assertSame($aes->getKeyLength(), 128);
+        $ciphertext = bin2hex($aes->encrypt('a'));
+        $this->assertSame($ciphertext, '82b7b068dfc60ed2a46893b69fecd6c2');
+        $this->assertSame($aes->getKeyLength(), 128);
+    }
+
+    public function testSetKeyLengthWithSmallerKey()
+    {
+        $aes = new Crypt_AES();
+        $aes->setKeyLength(256);
+        $aes->setKey(str_repeat('a', 16));
+        $this->assertSame($aes->getKeyLength(), 256);
+        $ciphertext = bin2hex($aes->encrypt('a'));
+        $this->assertSame($ciphertext, 'fd4250c0d234aa7e1aa592820aa8406b');
+        $this->assertSame($aes->getKeyLength(), 256);
     }
 }
